@@ -84,6 +84,21 @@ namespace PixelEngine
 
         private void ComposeFrame()
         {
+            Color[] colors = new Color[12]{
+                Color.White,
+                Color.Blue,
+                Color.Cyan,
+                Color.Gray,
+                Color.Green,
+                Color.Magenta,
+                Color.LightGray,
+                Color.Red,
+                Color.Yellow,
+                Color.White,
+                Color.Blue,
+                Color.Cyan
+            };
+
             IndexedTriangleList triangles = cube.GetTriangles().DeepCopy();
             
             Mat3<float> rot =
@@ -101,7 +116,7 @@ namespace PixelEngine
             for (int i = 0; i != triangles.indices.Count; i += 3)
             {
                 gfx.DrawTriangle(triangles.vertices[triangles.indices[i]], triangles.vertices[triangles.indices[i + 1]], 
-                    triangles.vertices[triangles.indices[i + 2]], Color.White);
+                    triangles.vertices[triangles.indices[i + 2]], colors[i/3]);
             }
             
         }
