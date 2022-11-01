@@ -16,9 +16,10 @@ namespace PixelEngine
         readonly Keyboard keyboard = new Keyboard();
 
         PubeScreenTransformer pst = new PubeScreenTransformer();
-        Cube cube = new Cube(1.0f);
+        Pyramid cube = new Pyramid(1.0f);
 
         float dTheta = (float)Math.PI;
+        float offset_z = 2.0f;
         float theta_x = 0.0f;
         float theta_y = 0.0f;
         float theta_z = 0.0f;
@@ -70,7 +71,15 @@ namespace PixelEngine
             {
                 theta_z = wrap_angle(theta_z - dTheta * dt);
             }
-            
+            if (keyboard.GetKeyPressed(Keys.R))
+            {
+                offset_z += 2.0f * dt;
+            }
+            if (keyboard.GetKeyPressed(Keys.F))
+            {
+                offset_z -= 2.0f * dt;
+            }
+
         }
 
         private void ComposeFrame()
@@ -85,7 +94,7 @@ namespace PixelEngine
             for (int i = 0; i < lines.vertices.Count; i++ )
             {
                 lines.vertices[i] *= rot;
-                lines.vertices[i] += new Vec3<float>( 0.0f,0.0f,1.0f );
+                lines.vertices[i] += new Vec3<float>( 0.0f,0.0f,offset_z );
                 pst.Transform(lines.vertices[i]);
             }
             

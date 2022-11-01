@@ -15,8 +15,9 @@ namespace PixelEngine
         }
         public Vec3<float> Transform(Vec3<float> v)
         {
-            v.x = (v.x + 1.0f) * xFactor;
-            v.y = (-v.y + 1.0f) * yFactor;
+            float zInv = 1.0f / v.z;
+            v.x = (v.x * zInv + 1.0f) * xFactor;
+            v.y = (-v.y * zInv + 1.0f) * yFactor;
             return v;
         }
 
