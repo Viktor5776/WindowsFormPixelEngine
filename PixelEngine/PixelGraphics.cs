@@ -58,11 +58,10 @@ namespace PixelEngine
 
     internal class PixelGraphics
     {
-        readonly Color[] PixelArray = new Color[640 * 640];
         DirectBitmap bitmap = new DirectBitmap(640, 640);
         public void PutPixel(int x, int y, Color c)
         {
-            PixelArray[y * 640 + x] = c;
+            bitmap.SetPixel(x, y, c);
         }
 
         public void DrawLine(Vec2<float> p0, Vec2<float> p1, Color c)
@@ -116,13 +115,13 @@ namespace PixelEngine
             }
         }
 
-        public void DrawClosedPolyline(List<Vec2<float>> verts,Color c )
+        public void DrawClosedPolyline(List<Vec2<float>> verts, Color c)
         {
             for (int i = 0; i < verts.Count - 1; i++)
             {
                 DrawLine(verts[i], verts[i + 1], c);
             }
-            DrawLine(verts[verts.Count - 1], verts[0], c );
+            DrawLine(verts[verts.Count - 1], verts[0], c);
         }
 
 
@@ -139,13 +138,6 @@ namespace PixelEngine
 
         public void Draw(Graphics g)
         {
-            for (int y = 0; y < 640; y++)
-            {
-                for (int x = 0; x < 640; x++)
-                {
-                    bitmap.SetPixel(x, y, PixelArray[y * 640 + x]);
-                }
-            }
             g.DrawImage(bitmap.Bitmap, 0, 0);
         }
     }
