@@ -84,23 +84,24 @@ namespace PixelEngine
 
         private void ComposeFrame()
         {
-            IndexedLineList lines = cube.GetLines().DeepCopy();
+            IndexedTriangleList triangles = cube.GetTriangles().DeepCopy();
             
             Mat3<float> rot =
                 Mat3<float>.RotationX(theta_x) *
                 Mat3<float>.RotationY(theta_y) *
                 Mat3<float>.RotationZ(theta_z);
             
-            for (int i = 0; i < lines.vertices.Count; i++ )
+            for (int i = 0; i < triangles.vertices.Count; i++ )
             {
-                lines.vertices[i] *= rot;
-                lines.vertices[i] += new Vec3<float>( 0.0f,0.0f,offset_z );
-                pst.Transform(lines.vertices[i]);
+                triangles.vertices[i] *= rot;
+                triangles.vertices[i] += new Vec3<float>( 0.0f,0.0f,offset_z );
+                pst.Transform(triangles.vertices[i]);
             }
             
-            for (int i = 0; i != lines.indices.Count; i += 2)
+            for (int i = 0; i != triangles.indices.Count; i += 3)
             {
-                gfx.DrawLine(lines.vertices[lines.indices[i]], lines.vertices[lines.indices[i + 1]], Color.White);
+                gfx.DrawTriangle(triangles.vertices[triangles.indices[i]], triangles.vertices[triangles.indices[i + 1]], 
+                    triangles.vertices[triangles.indices[i + 2]], Color.White);
             }
             
         }

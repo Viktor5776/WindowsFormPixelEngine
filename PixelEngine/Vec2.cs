@@ -75,7 +75,7 @@ namespace PixelEngine
         {
             dynamic d_lhs = lhs;
             dynamic d_rhs = rhs;
-            return new Vec2<T>(d_lhs.x - d_rhs.x, d_lhs.y - d_lhs.y);
+            return new Vec2<T>(d_lhs.x - d_rhs.x, d_lhs.y - d_rhs.y);
         }
  
         public static Vec2<T> operator*(Vec2<T> lhs, T rhs)

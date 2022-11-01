@@ -29,10 +29,10 @@ namespace PixelEngine
             Bitmap = new Bitmap(width, height, width * 4, PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
         }
 
-        public void SetPixel(int x, int y, Color colour)
+        public void SetPixel(int x, int y, Color color)
         {
             int index = x + (y * Width);
-            int col = colour.ToArgb();
+            int col = color.ToArgb();
 
             Bits[index] = col;
         }
@@ -124,6 +124,112 @@ namespace PixelEngine
             DrawLine(verts[verts.Count - 1], verts[0], c);
         }
 
+        public void DrawTriangle(Vec2<float> v0, Vec2<float> v1, Vec2<float> v2, Color c)
+        {
+
+            if (v1.y < v0.y) 
+            {
+                Vec2<float> temp = v0;
+                v0 = v1;
+                v1 = temp;
+            }
+	        if (v2.y < v1.y) 
+            {
+                Vec2<float> temp = v1;
+                v1 = v2;
+                v2 = temp;
+            }
+	        if (v1.y < v0.y) 
+            {
+                Vec2<float> temp = v0;
+                v0 = v1;
+                v1 = temp;
+            }
+
+	        if (v0.y == v1.y) // Flat Top
+	        {
+		        if (v1.x < v0.x)
+                {
+                    Vec2<float> temp = v0;
+                    v0 = v1;
+                    v1 = temp;
+                }
+                DrawFlatTopTriangle(v0, v1, v2, c);
+            }
+	        else if (v1.y == v2.y) // Flat Bottom
+	        {
+		        if (v2.x < v1.x)
+                {
+                    Vec2<float> temp = v1;
+                    v1 = v2;
+                    v2 = temp;
+                }
+                DrawFlatBottomTriangle(v0, v1, v2, c);
+            }
+            else // General Triangle
+            {
+                float alphaSplit = (v1.y - v0.y) / (v2.y - v0.y);
+                Vec2<float> vi = v0 + (v2 - v0) * alphaSplit;
+                if (v1.x < vi.x) // Major Right Triangle
+                {
+                    DrawFlatBottomTriangle(v0, v1, vi, c);
+                    DrawFlatTopTriangle(v1, vi, v2, c);
+                }
+                else // Major Left
+                {   
+                    DrawFlatBottomTriangle(v0, vi, v1, c);
+                    DrawFlatTopTriangle(vi, v1, v2, c);
+                }
+            }
+        }
+
+        private void DrawFlatTopTriangle(Vec2<float> v0, Vec2<float> v1, Vec2<float> v2, Color c)
+        {   
+
+            float k0 = (v2.x - v0.x) / (v2.y - v0.y);
+            float k1 = (v2.x - v1.x) / (v2.y - v1.y);
+
+            int yStart = (int)Math.Ceiling(v0.y - 0.5f);
+            int yEnd = (int)Math.Ceiling(v2.y - 0.5f);
+
+	        for (int y = yStart; y<yEnd; y++)
+	        {
+		        float px0 = k0 * ((float)(y) + 0.5f - v0.y) + v0.x;
+                float px1 = k1 * ((float)(y) + 0.5f - v1.y) + v1.x;
+
+                int xStart = (int)Math.Ceiling(px0 - 0.5f);
+                int xEnd = (int)Math.Ceiling(px1 - 0.5f);
+
+		        for (int x = xStart; x<xEnd; x++)
+		        {
+			        PutPixel(x, y, c);
+                }
+            }
+        }
+
+        private void DrawFlatBottomTriangle(Vec2<float> v0, Vec2<float> v1, Vec2<float> v2, Color c)
+        {
+
+            float k0 = (v1.x - v0.x) / (v1.y - v0.y);
+            float k1 = (v2.x - v0.x) / (v2.y - v0.y);
+
+            int yStart = (int)Math.Ceiling(v0.y - 0.5f);
+            int yEnd = (int)Math.Ceiling(v2.y - 0.5f);
+
+            for (int y = yStart; y < yEnd; y++)
+            {
+                float px0 = k0 * ((float)(y) + 0.5f - v0.y) + v0.x;
+                float px1 = k1 * ((float)(y) + 0.5f - v0.y) + v0.x;
+
+                int xStart = (int)Math.Ceiling(px0 - 0.5f);
+                int xEnd = (int)Math.Ceiling(px1 - 0.5f);
+
+                for (int x = xStart; x < xEnd; x++)
+                {
+                    PutPixel(x, y, c);
+                }
+            }
+        }
 
         public void ResetScreen()
         {
