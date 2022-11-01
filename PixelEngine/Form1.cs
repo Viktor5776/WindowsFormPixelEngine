@@ -16,7 +16,7 @@ namespace PixelEngine
         readonly Keyboard keyboard = new Keyboard();
 
         PubeScreenTransformer pst = new PubeScreenTransformer();
-        Pyramid cube = new Pyramid(1.0f);
+        Cube cube = new Cube(1.0f);
 
         float dTheta = (float)Math.PI;
         float offset_z = 2.0f;

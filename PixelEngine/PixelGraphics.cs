@@ -59,7 +59,7 @@ namespace PixelEngine
     internal class PixelGraphics
     {
         readonly Color[] PixelArray = new Color[640 * 640];
-
+        DirectBitmap bitmap = new DirectBitmap(640, 640);
         public void PutPixel(int x, int y, Color c)
         {
             PixelArray[y * 640 + x] = c;
@@ -139,7 +139,6 @@ namespace PixelEngine
 
         public void Draw(Graphics g)
         {
-            DirectBitmap bitmap = new DirectBitmap(640, 640);
             for (int y = 0; y < 640; y++)
             {
                 for (int x = 0; x < 640; x++)
