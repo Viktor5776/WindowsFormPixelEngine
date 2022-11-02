@@ -25,7 +25,7 @@ namespace PixelEngine
             InitializeComponent();
 
             scenes.Add(new SolidCubeScene());
-            scenes.Add(new SolidCubeScene2());
+            scenes.Add(new PyramidScene());
 
             Timer tmr = new Timer
             {

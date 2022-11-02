@@ -8,7 +8,7 @@ using System.Drawing;
 
 namespace PixelEngine.Scenes
 {
-    internal class SolidCubeScene2 : Scene
+    internal class PyramidScene : Scene
     {
         public override void Update(Keyboard keyboard, float dt)
         {
@@ -44,11 +44,13 @@ namespace PixelEngine.Scenes
             {
                 offset_z -= 2.0f * dt;
             }
+            drawWireFrame = keyboard.GetKeyPressed(Keys.ControlKey);
         }
 
         public override void Draw(PixelGraphics gfx)
         {
-            IndexedTriangleList triangles = cube.GetTriangles().DeepCopy();
+            IndexedLineList lines = pyramid.GetLines().DeepCopy();
+            IndexedTriangleList triangles = pyramid.GetTriangles().DeepCopy();
 
             Mat3<float> rot =
                 Mat3<float>.RotationX(theta_x) *
@@ -59,6 +61,9 @@ namespace PixelEngine.Scenes
             {
                 triangles.vertices[i] *= rot;
                 triangles.vertices[i] += new Vec3<float>(0.0f, 0.0f, offset_z);
+
+                lines.vertices[i] *= rot;
+                lines.vertices[i] += new Vec3<float>(0.0f, 0.0f, offset_z);
             }
 
             for (int i = 0, end = triangles.indices.Count / 3; i < end; i++)
@@ -72,6 +77,7 @@ namespace PixelEngine.Scenes
             for (int i = 0; i < triangles.vertices.Count; i++)
             {
                 pst.Transform(triangles.vertices[i]);
+                pst.Transform(lines.vertices[i]);
             }
 
             for (int i = 0, end = triangles.indices.Count / 3; i < end; i++)
@@ -85,28 +91,29 @@ namespace PixelEngine.Scenes
                         colors[i]);
                 }
             }
+
+            if (drawWireFrame)
+            {
+                for (int i = 0; i != lines.indices.Count; i += 2)
+                {
+                    gfx.DrawLine(lines.vertices[lines.indices[i]], lines.vertices[lines.indices[i + 1]], Color.White);
+                }
+            }
         }
 
         PubeScreenTransformer pst = new PubeScreenTransformer();
-        Cube cube = new Cube(1.0f);
-        Color[] colors = new Color[12]{
-            Color.Lime,
+        Pyramid pyramid = new Pyramid(1.0f);
+        Color[] colors = new Color[4]{
+            Color.Red,
             Color.Blue,
-            Color.Lime,
-            Color.Blue,
-            Color.Lime,
-            Color.Blue,
-            Color.Lime,
-            Color.Blue,
-            Color.Lime,
-            Color.Blue,
-            Color.Lime,
-            Color.Blue
+            Color.Yellow,
+            Color.LimeGreen
         };
         float dTheta = (float)Math.PI;
         float offset_z = 2.0f;
         float theta_x = 0.0f;
         float theta_y = 0.0f;
         float theta_z = 0.0f;
+        bool drawWireFrame = false;
     }
 }
