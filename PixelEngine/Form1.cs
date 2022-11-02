@@ -110,15 +110,32 @@ namespace PixelEngine
             {
                 triangles.vertices[i] *= rot;
                 triangles.vertices[i] += new Vec3<float>( 0.0f,0.0f,offset_z );
+            }
+
+            for (int i = 0, end = triangles.indices.Count / 3; i < end; i++)
+            {
+                Vec3<float>v0 = triangles.vertices[triangles.indices[i * 3]];
+                Vec3<float>v1 = triangles.vertices[triangles.indices[i * 3 + 1]];
+                Vec3<float>v2 = triangles.vertices[triangles.indices[i * 3 + 2]];
+                triangles.cullFlags[i] = (v1 - v0) % (v2 - v0) * v0 >= 0.0f;
+            }
+
+            for (int i = 0; i < triangles.vertices.Count; i++)
+            {
                 pst.Transform(triangles.vertices[i]);
             }
-            
-            for (int i = 0; i != triangles.indices.Count; i += 3)
+
+            for (int i = 0, end = triangles.indices.Count / 3; i < end; i++)
             {
-                gfx.DrawTriangle(triangles.vertices[triangles.indices[i]], triangles.vertices[triangles.indices[i + 1]], 
-                    triangles.vertices[triangles.indices[i + 2]], colors[i/3]);
+                if(!triangles.cullFlags[i])
+                {
+                    gfx.DrawTriangle(
+                        triangles.vertices[triangles.indices[i * 3]],
+                        triangles.vertices[triangles.indices[i * 3 + 1]],
+                        triangles.vertices[triangles.indices[i * 3 + 2]],
+                        colors[i]);
+                }
             }
-            
         }
             
 

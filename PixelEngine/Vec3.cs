@@ -75,7 +75,7 @@ namespace PixelEngine
         {
             dynamic d_lhs = lhs;
             dynamic d_rhs = rhs;
-            return new Vec3<T>(d_lhs.x - d_rhs.x, d_lhs.y - d_lhs.y, d_lhs.z - d_lhs.z);
+            return new Vec3<T>(d_lhs.x - d_rhs.x, d_lhs.y - d_rhs.y, d_lhs.z - d_rhs.z);
         }
 
         public static Vec3<T> operator *(Vec3<T> lhs, T rhs)
@@ -83,6 +83,25 @@ namespace PixelEngine
             dynamic d_lhs = lhs;
 
             return new Vec3<T>(d_lhs.x * rhs, d_lhs.y * rhs, d_lhs * rhs);
+        }
+
+        public static T operator *(Vec3<T> lhs, Vec3<T> rhs)
+        {
+            dynamic d_lhs = lhs;
+            dynamic d_rhs = rhs;
+
+            return d_lhs.x * d_rhs.x + d_lhs.y * d_rhs.y + d_lhs.z * d_rhs.z;
+        }
+
+        public static Vec3<T> operator %(Vec3<T> lhs, Vec3<T> rhs)
+        {
+            dynamic d_lhs = lhs;
+            dynamic d_rhs = rhs;
+
+            return new Vec3<T>(
+                d_lhs.y * d_rhs.z - d_lhs.z * d_rhs.y,
+                d_lhs.z * d_rhs.x - d_lhs.x * d_rhs.z,
+                d_lhs.x * d_rhs.y - d_lhs.y * d_rhs.x);
         }
 
         public static Vec3<T> operator /(Vec3<T> lhs, T rhs)

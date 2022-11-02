@@ -47,6 +47,11 @@ namespace PixelEngine
 				0,4,2, 2,4,6,
 				0,1,4, 1,5,4 
 		    };
+            triangles.cullFlags = new List<bool>();
+            for (int i = 0; i < triangles.indices.Count / 3; i++)
+            {
+                triangles.cullFlags.Add(false);
+            }
             return triangles;
         }
 
