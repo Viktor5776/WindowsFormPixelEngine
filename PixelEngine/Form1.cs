@@ -26,6 +26,8 @@ namespace PixelEngine
 
             scenes.Add(new SolidCubeScene());
             scenes.Add(new SauronCubeScene());
+            scenes.Add(new TexWrapScene(2.0f));
+
 
             Timer tmr = new Timer
             {

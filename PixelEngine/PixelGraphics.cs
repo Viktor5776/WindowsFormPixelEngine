@@ -348,6 +348,122 @@ namespace PixelEngine
             }
         }
 
+        public void DrawTriangleTexWrap(TexVertex v0, TexVertex v1, TexVertex v2, DirectBitmap tex)
+        {
+
+            if (v1.pos.y < v0.pos.y)
+            {
+                TexVertex temp = v0;
+                v0 = v1;
+                v1 = temp;
+            }
+            if (v2.pos.y < v1.pos.y)
+            {
+                TexVertex temp = v1;
+                v1 = v2;
+                v2 = temp;
+            }
+            if (v1.pos.y < v0.pos.y)
+            {
+                TexVertex temp = v0;
+                v0 = v1;
+                v1 = temp;
+            }
+
+            if (v0.pos.y == v1.pos.y) // Flat Top
+            {
+                if (v1.pos.x < v0.pos.x)
+                {
+                    TexVertex temp = v0;
+                    v0 = v1;
+                    v1 = temp;
+                }
+                DrawFlatTopTriangleTexWrap(v0, v1, v2, tex);
+            }
+            else if (v1.pos.y == v2.pos.y) // Flat Bottom
+            {
+                if (v2.pos.x < v1.pos.x)
+                {
+                    TexVertex temp = v1;
+                    v1 = v2;
+                    v2 = temp;
+                }
+                DrawFlatBottomTriangleTexWrap(v0, v1, v2, tex);
+            }
+            else // General Triangle
+            {
+                float alphaSplit = (v1.pos.y - v0.pos.y) / (v2.pos.y - v0.pos.y);
+                TexVertex vi = v0.InterpolateTo(v2, alphaSplit);
+                if (v1.pos.x < vi.pos.x) // Major Right Triangle
+                {
+                    DrawFlatBottomTriangleTexWrap(v0, v1, vi, tex);
+                    DrawFlatTopTriangleTexWrap(v1, vi, v2, tex);
+                }
+                else // Major Left
+                {
+                    DrawFlatBottomTriangleTexWrap(v0, vi, v1, tex);
+                    DrawFlatTopTriangleTexWrap(vi, v1, v2, tex);
+                }
+            }
+        }
+
+        private void DrawFlatTopTriangleTexWrap(TexVertex v0, TexVertex v1, TexVertex v2, DirectBitmap tex)
+        {
+            float delta_y = v2.pos.y - v0.pos.y;
+            TexVertex dv0 = (v2 - v0) / delta_y;
+            TexVertex dv1 = (v2 - v1) / delta_y;
+
+            TexVertex itEdge1 = v1;
+
+            DrawFlatTriangleTexWrap(v0, v1, v2, tex, dv0, dv1, itEdge1);
+        }
+
+        private void DrawFlatBottomTriangleTexWrap(TexVertex v0, TexVertex v1, TexVertex v2, DirectBitmap tex)
+        {
+
+            float delta_y = v2.pos.y - v0.pos.y;
+            TexVertex dv0 = (v1 - v0) / delta_y;
+            TexVertex dv1 = (v2 - v0) / delta_y;
+
+            TexVertex itEdge1 = v0;
+
+            DrawFlatTriangleTexWrap(v0, v1, v2, tex, dv0, dv1, itEdge1);
+        }
+
+        private void DrawFlatTriangleTexWrap(TexVertex v0, TexVertex v1, TexVertex v2, DirectBitmap tex,
+                              TexVertex dv0, TexVertex dv1, TexVertex itEdge1)
+        {
+            TexVertex itEdge0 = v0;
+
+            int yStart = (int)Math.Ceiling(v0.pos.y - 0.5f);
+            int yEnd = (int)Math.Ceiling(v2.pos.y - 0.5f);
+
+            itEdge0 += dv0 * ((float)yStart + 0.5f - v0.pos.y);
+            itEdge1 += dv1 * ((float)yStart + 0.5f - v0.pos.y);
+
+            float tex_width = tex.Width;
+            float tex_height = tex.Height;
+            float tex_clamp_x = tex_width - 1.0f;
+            float tex_clamp_y = tex_height - 1.0f;
+
+            for (int y = yStart; y < yEnd; y++, itEdge0 += dv0, itEdge1 += dv1)
+            {
+                int xStart = (int)Math.Ceiling(itEdge0.pos.x - 0.5f);
+                int xEnd = (int)Math.Ceiling(itEdge1.pos.x - 0.5f);
+
+                Vec2<float> dtcLine = (itEdge1.tc - itEdge0.tc) / (itEdge1.pos.x - itEdge0.pos.x);
+
+                Vec2<float> itcLine = itEdge0.tc + dtcLine * ((float)xStart + 0.5f - itEdge0.pos.x);
+
+                for (int x = xStart; x < xEnd; x++, itcLine += dtcLine)
+                {
+                    PutPixel(x, y, tex.GetPixel(
+                        (int)((itcLine.x * tex_width) % tex_clamp_x),
+                        (int)((itcLine.y * tex_height) % tex_clamp_y)
+                    ));
+                }
+            }
+        }
 
         public void ResetScreen()
         {

@@ -9,23 +9,23 @@ namespace PixelEngine
 {
     internal class Cube
     {
-        public Cube(float size)
+        public Cube(float size, float texdim = 1.0f)
         {
             float side = size / 2.0f;
             vertices.Add(new Vec3<float>(-side, -side, -side)); // 0
-            tc.Add(new Vec2<float>(0.0f, 1.0f));
+            tc.Add(new Vec2<float>(0.0f, texdim));
             vertices.Add(new Vec3<float>(side, -side, -side)); // 1
-            tc.Add(new Vec2<float>(1.0f, 1.0f));
+            tc.Add(new Vec2<float>(texdim, texdim));
             vertices.Add(new Vec3<float>(-side, side, -side)); // 2
             tc.Add(new Vec2<float>(0.0f, 0.0f));
             vertices.Add(new Vec3<float>(side, side, -side)); // 3
-            tc.Add(new Vec2<float>(1.0f, 0.0f));
+            tc.Add(new Vec2<float>(texdim, 0.0f));
             vertices.Add(new Vec3<float>(-side, -side, side)); // 4
-            tc.Add(new Vec2<float>(1.0f, 1.0f));
+            tc.Add(new Vec2<float>(texdim, texdim));
             vertices.Add(new Vec3<float>(side, -side, side)); // 5
-            tc.Add(new Vec2<float>(0.0f, 1.0f));
+            tc.Add(new Vec2<float>(0.0f, texdim));
             vertices.Add(new Vec3<float>(-side, side, side)); // 6
-            tc.Add(new Vec2<float>(1.0f, 0.0f));
+            tc.Add(new Vec2<float>(texdim, 0.0f));
             vertices.Add(new Vec3<float>(side, side, side)); // 7
             tc.Add(new Vec2<float>(0.0f, 0.0f));
         }
