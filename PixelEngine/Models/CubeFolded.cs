@@ -5,29 +5,41 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PixelEngine
+namespace PixelEngine.Models
 {
-    internal class Cube
+    internal class CubeFolded
     {
-        public Cube(float size, float texdim = 1.0f)
+        public CubeFolded(float size)
         {
             float side = size / 2.0f;
             vertices.Add(new Vec3<float>(-side, -side, -side)); // 0
-            tc.Add(new Vec2<float>(0.0f, texdim));
+            tc.Add(new Vec2<float>(1.0f, 0.0f));
             vertices.Add(new Vec3<float>(side, -side, -side)); // 1
-            tc.Add(new Vec2<float>(texdim, texdim));
-            vertices.Add(new Vec3<float>(-side, side, -side)); // 2
             tc.Add(new Vec2<float>(0.0f, 0.0f));
+            vertices.Add(new Vec3<float>(-side, side, -side)); // 2
+            tc.Add(new Vec2<float>(1.0f, 1.0f));
             vertices.Add(new Vec3<float>(side, side, -side)); // 3
-            tc.Add(new Vec2<float>(texdim, 0.0f));
+            tc.Add(new Vec2<float>(0.0f, 1.0f));
             vertices.Add(new Vec3<float>(-side, -side, side)); // 4
-            tc.Add(new Vec2<float>(texdim, texdim));
+            tc.Add(new Vec2<float>(1.0f, 1.0f));
             vertices.Add(new Vec3<float>(side, -side, side)); // 5
-            tc.Add(new Vec2<float>(0.0f, texdim));
+            tc.Add(new Vec2<float>(0.0f, 1.0f));
             vertices.Add(new Vec3<float>(-side, side, side)); // 6
-            tc.Add(new Vec2<float>(texdim, 0.0f));
+            tc.Add(new Vec2<float>(1.0f, 0.0f));
             vertices.Add(new Vec3<float>(side, side, side)); // 7
             tc.Add(new Vec2<float>(0.0f, 0.0f));
+            vertices.Add(new Vec3<float>(-side, -side, -side)); // 8
+            tc.Add(new Vec2<float>(1.0f, 0.0f));
+            vertices.Add(new Vec3<float>(side, -side, -side)); // 9
+            tc.Add(new Vec2<float>(0.0f, 0.0f));
+            vertices.Add(new Vec3<float>(-side, -side, -side)); // 10
+            tc.Add(new Vec2<float>(0.0f, 1.0f));
+            vertices.Add(new Vec3<float>(-side, -side, side)); // 11
+            tc.Add(new Vec2<float>(0.0f, 0.0f));
+            vertices.Add(new Vec3<float>(side, -side, -side)); // 12
+            tc.Add(new Vec2<float>(1.0f, 1.0f));
+            vertices.Add(new Vec3<float>(side, -side, side)); // 13
+            tc.Add(new Vec2<float>(1.0f, 0.0f));
         }
         public IndexedLineList GetLines()
         {
@@ -43,18 +55,18 @@ namespace PixelEngine
         }
 
         public IndexedTriangleList<Vec3<float>> GetTriangles()
-	    {
+        {
             IndexedTriangleList<Vec3<float>> triangles = new IndexedTriangleList<Vec3<float>>();
             triangles.vertices = vertices;
             triangles.indices = new List<int>
             {
-				0,2,1, 2,3,1,
-				1,3,5, 3,7,5,
-				2,6,3, 3,6,7,
-				4,5,7, 4,7,6,
-				0,4,2, 2,4,6,
-				0,1,4, 1,5,4 
-		    };
+                0,2,1, 2,3,1,
+                4,8,5, 5,8,9,
+                2,6,3, 3,6,7,
+                4,5,7, 4,7,6,
+                2,10,11, 2,11,6,
+                12,3,7, 12,7,13
+            };
             triangles.cullFlags = new List<bool>();
             for (int i = 0; i < triangles.indices.Count / 3; i++)
             {
@@ -75,11 +87,11 @@ namespace PixelEngine
             triangles.indices = new List<int>
             {
                 0,2,1, 2,3,1,
-                1,3,5, 3,7,5,
+                4,8,5, 5,8,9,
                 2,6,3, 3,6,7,
                 4,5,7, 4,7,6,
-                0,4,2, 2,4,6,
-                0,1,4, 1,5,4
+                2,10,11, 2,11,6,
+                12,3,7, 12,7,13
             };
             triangles.cullFlags = new List<bool>();
             for (int i = 0; i < triangles.indices.Count / 3; i++)

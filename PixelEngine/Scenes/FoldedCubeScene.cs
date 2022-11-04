@@ -5,12 +5,28 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
+using System.IO;
+using System.Reflection;
 using PixelEngine.Models;
 
 namespace PixelEngine.Scenes
 {
-    internal class SolidCubeScene : Scene
+    internal class FoldedCubeScene : Scene
     {
+        public FoldedCubeScene(string filename)
+        {
+            Bitmap bmp = new Bitmap(Image.FromFile(filename));
+
+            texture = new DirectBitmap(bmp.Width, bmp.Height);
+            for (int y = 0; y < texture.Height; y++)
+            {
+                for (int x = 0; x < texture.Width; x++)
+                {
+                    texture.SetPixel(x, y, bmp.GetPixel(x, y));
+                }
+            }
+        }
+
         public override void Update(Keyboard keyboard, float dt)
         {
             if (keyboard.GetKeyPressed(Keys.Q))
@@ -51,7 +67,7 @@ namespace PixelEngine.Scenes
         public override void Draw(PixelGraphics gfx)
         {
             IndexedLineList lines = cube.GetLines().DeepCopy();
-            IndexedTriangleList<Vec3<float>> triangles = cube.GetTriangles().DeepCopy();
+            IndexedTriangleList<TexVertex> triangles = cube.GetTrianglesTex().DeepCopy();
 
             Mat3<float> rot =
                 Mat3<float>.RotationX(theta_x) *
@@ -60,8 +76,8 @@ namespace PixelEngine.Scenes
 
             for (int i = 0; i < triangles.vertices.Count; i++)
             {
-                triangles.vertices[i] *= rot;
-                triangles.vertices[i] += new Vec3<float>(0.0f, 0.0f, offset_z);
+                triangles.vertices[i].pos *= rot;
+                triangles.vertices[i].pos += new Vec3<float>(0.0f, 0.0f, offset_z);
 
                 lines.vertices[i] *= rot;
                 lines.vertices[i] += new Vec3<float>(0.0f, 0.0f, offset_z);
@@ -69,15 +85,15 @@ namespace PixelEngine.Scenes
 
             for (int i = 0, end = triangles.indices.Count / 3; i < end; i++)
             {
-                Vec3<float> v0 = triangles.vertices[triangles.indices[i * 3]];
-                Vec3<float> v1 = triangles.vertices[triangles.indices[i * 3 + 1]];
-                Vec3<float> v2 = triangles.vertices[triangles.indices[i * 3 + 2]];
+                Vec3<float> v0 = triangles.vertices[triangles.indices[i * 3]].pos;
+                Vec3<float> v1 = triangles.vertices[triangles.indices[i * 3 + 1]].pos;
+                Vec3<float> v2 = triangles.vertices[triangles.indices[i * 3 + 2]].pos;
                 triangles.cullFlags[i] = (v1 - v0) % (v2 - v0) * v0 >= 0.0f;
             }
 
             for (int i = 0; i < triangles.vertices.Count; i++)
             {
-                pst.Transform(triangles.vertices[i]);
+                pst.Transform(triangles.vertices[i].pos);
                 pst.Transform(lines.vertices[i]);
             }
 
@@ -85,11 +101,11 @@ namespace PixelEngine.Scenes
             {
                 if (!triangles.cullFlags[i])
                 {
-                    gfx.DrawTriangle(
+                    gfx.DrawTriangleTex(
                         triangles.vertices[triangles.indices[i * 3]],
                         triangles.vertices[triangles.indices[i * 3 + 1]],
                         triangles.vertices[triangles.indices[i * 3 + 2]],
-                        colors[i]);
+                        texture);
                 }
             }
 
@@ -103,26 +119,14 @@ namespace PixelEngine.Scenes
         }
 
         PubeScreenTransformer pst = new PubeScreenTransformer();
-        Cube cube = new Cube(1.0f);
-        Color[] colors = new Color[12]{
-		    Color.White,
-		    Color.White,
-		    Color.LimeGreen,
-		    Color.LimeGreen,
-		    Color.Red,
-		    Color.Red,
-		    Color.Yellow,
-		    Color.Yellow,
-		    Color.Blue,
-		    Color.Blue,
-		    Color.Orange,
-		    Color.Orange
-        };
+        CubeFolded cube = new CubeFolded(1.0f);
         float dTheta = (float)Math.PI;
         float offset_z = 2.0f;
         float theta_x = 0.0f;
         float theta_y = 0.0f;
         float theta_z = 0.0f;
         bool drawWireFrame = false;
+        DirectBitmap texture;
     }
 }
+

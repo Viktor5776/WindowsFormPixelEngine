@@ -24,9 +24,12 @@ namespace PixelEngine
         {
             InitializeComponent();
 
+            // Add Path to PixelEngine Between C: and \PixelEngine
             scenes.Add(new SolidCubeScene());
-            scenes.Add(new SauronCubeScene());
-            scenes.Add(new TexWrapScene(2.0f));
+            scenes.Add(new TexWrapScene(@"C:\PixelEngine\Images\sauron100x100.png",4.0f));
+            scenes.Add(new CubeSkinnedScene(@"C:\PixelEngine\Images\dice_skin.png"));
+            scenes.Add(new CubeSkinnedScene(@"C:\PixelEngine\Images\office_skin.jpg"));
+            scenes.Add(new FoldedCubeScene(@"C:\PixelEngine\Images\wood.jpg"));
 
 
             Timer tmr = new Timer

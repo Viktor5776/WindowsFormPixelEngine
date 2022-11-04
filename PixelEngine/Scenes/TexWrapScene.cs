@@ -7,26 +7,26 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
+using PixelEngine.Models;
 
 namespace PixelEngine.Scenes
 {
     internal class TexWrapScene : Scene
     {
-        public TexWrapScene(float texDim = 1.0f)
+        public TexWrapScene(string filename, float texdim = 1.0f)
         {
-            // Add Path to PixelEngine Between C: and \PixelEngine
-            Bitmap bmp = new Bitmap(Image.FromFile(@"C:\Users\vikto\OneDrive\Skrivbord\WindowsFromPixelEngine\PixelEngine\Images\sauron100x100.png"));
+            Bitmap bmp = new Bitmap(Image.FromFile(filename));
 
-            sauronTex = new DirectBitmap(bmp.Width, bmp.Height);
-            for (int y = 0; y < sauronTex.Height; y++)
+            texture = new DirectBitmap(bmp.Width, bmp.Height);
+            for (int y = 0; y < texture.Height; y++)
             {
-                for (int x = 0; x < sauronTex.Width; x++)
+                for (int x = 0; x < texture.Width; x++)
                 {
-                    sauronTex.SetPixel(x, y, bmp.GetPixel(x, y));
+                    texture.SetPixel(x, y, bmp.GetPixel(x, y));
                 }
             }
 
-            cube = new Cube(1.0f, texDim);
+            cube = new Cube(1.0f, texdim);
         }
 
         public override void Update(Keyboard keyboard, float dt)
@@ -107,7 +107,7 @@ namespace PixelEngine.Scenes
                         triangles.vertices[triangles.indices[i * 3]],
                         triangles.vertices[triangles.indices[i * 3 + 1]],
                         triangles.vertices[triangles.indices[i * 3 + 2]],
-                        sauronTex);
+                        texture);
                 }
             }
 
@@ -128,7 +128,7 @@ namespace PixelEngine.Scenes
         float theta_y = 0.0f;
         float theta_z = 0.0f;
         bool drawWireFrame = false;
-        DirectBitmap sauronTex;
+        DirectBitmap texture;
     }
 }
 

@@ -7,22 +7,22 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
+using PixelEngine.Models;
 
 namespace PixelEngine.Scenes
 {
-    internal class SauronCubeScene : Scene
+    internal class CubeSkinnedScene : Scene
     {
-        public SauronCubeScene()
+        public CubeSkinnedScene(string filename)
         {
-            // Add Path to PixelEngine Between C: and \PixelEngine
-            Bitmap bmp = new Bitmap(Image.FromFile(@"C:\Users\vikto\OneDrive\Skrivbord\WindowsFromPixelEngine\PixelEngine\Images\sauron100x100.png"));
-            
-            sauronTex = new DirectBitmap(bmp.Width, bmp.Height);
-            for (int y = 0; y < sauronTex.Height; y++)
+            Bitmap bmp = new Bitmap(Image.FromFile(filename));
+
+            texture = new DirectBitmap(bmp.Width, bmp.Height);
+            for (int y = 0; y < texture.Height; y++)
             {
-                for (int x = 0; x < sauronTex.Width; x++)
+                for (int x = 0; x < texture.Width; x++)
                 {
-                    sauronTex.SetPixel(x, y, bmp.GetPixel(x, y));
+                    texture.SetPixel(x, y, bmp.GetPixel(x, y));
                 }
             }
         }
@@ -105,7 +105,7 @@ namespace PixelEngine.Scenes
                         triangles.vertices[triangles.indices[i * 3]],
                         triangles.vertices[triangles.indices[i * 3 + 1]],
                         triangles.vertices[triangles.indices[i * 3 + 2]],
-                        sauronTex);
+                        texture);
                 }
             }
 
@@ -119,13 +119,14 @@ namespace PixelEngine.Scenes
         }
 
         PubeScreenTransformer pst = new PubeScreenTransformer();
-        Cube cube = new Cube(1.0f);
+        CubeSkinned cube = new CubeSkinned(1.0f);
         float dTheta = (float)Math.PI;
         float offset_z = 2.0f;
         float theta_x = 0.0f;
         float theta_y = 0.0f;
         float theta_z = 0.0f;
         bool drawWireFrame = false;
-        DirectBitmap sauronTex;
+        DirectBitmap texture;
     }
 }
+

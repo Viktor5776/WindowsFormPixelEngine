@@ -458,8 +458,8 @@ namespace PixelEngine
                 for (int x = xStart; x < xEnd; x++, itcLine += dtcLine)
                 {
                     PutPixel(x, y, tex.GetPixel(
-                        (int)((itcLine.x * tex_width) % tex_clamp_x),
-                        (int)((itcLine.y * tex_height) % tex_clamp_y)
+                        (int)Math.Max((itcLine.x * tex_width) % tex_clamp_x,0),
+                        (int)Math.Max(((itcLine.y * tex_height) % tex_clamp_y),0)
                     ));
                 }
             }
