@@ -12,6 +12,21 @@ namespace PixelEngine.Scenes
 {
     internal class SauronCubeScene : Scene
     {
+        public SauronCubeScene()
+        {
+            // Add Path to PixelEngine Between C: and \PixelEngine
+            Bitmap bmp = new Bitmap(Image.FromFile(@"C:\Users\vikto\OneDrive\Skrivbord\WindowsFromPixelEngine\PixelEngine\Images\sauron100x100.png"));
+            
+            sauronTex = new DirectBitmap(bmp.Width, bmp.Height);
+            for (int y = 0; y < sauronTex.Height; y++)
+            {
+                for (int x = 0; x < sauronTex.Width; x++)
+                {
+                    sauronTex.SetPixel(x, y, bmp.GetPixel(x, y));
+                }
+            }
+        }
+
         public override void Update(Keyboard keyboard, float dt)
         {
             if (keyboard.GetKeyPressed(Keys.Q))
@@ -111,8 +126,6 @@ namespace PixelEngine.Scenes
         float theta_y = 0.0f;
         float theta_z = 0.0f;
         bool drawWireFrame = false;
-        // Add Path to PixelEngine Between C: and \PixelEngine
-        Bitmap sauronTex = new Bitmap(Image.FromFile(@"C:\PixelEngine\Images\sauron100x100.png"));
-
+        DirectBitmap sauronTex;
     }
 }

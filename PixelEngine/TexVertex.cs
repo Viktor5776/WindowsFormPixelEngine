@@ -22,6 +22,26 @@ namespace PixelEngine
             );
         }
 
+        public static TexVertex operator+(TexVertex lhs, TexVertex rhs)
+        {
+            return new TexVertex(lhs.pos + rhs.pos, lhs.tc + rhs.tc);
+        }
+
+        public static TexVertex operator -(TexVertex lhs, TexVertex rhs)
+        {
+            return new TexVertex(lhs.pos - rhs.pos, lhs.tc - rhs.tc);
+        }
+
+        public static TexVertex operator *(TexVertex lhs, float rhs)
+        {
+            return new TexVertex(lhs.pos * rhs, lhs.tc * rhs);
+        }
+
+        public static TexVertex operator /(TexVertex lhs, float rhs)
+        {
+            return new TexVertex(lhs.pos / rhs, lhs.tc / rhs);
+        }
+
         public Vec3<float> pos;
         public Vec2<float> tc;
     }

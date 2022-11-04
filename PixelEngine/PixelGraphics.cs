@@ -231,7 +231,7 @@ namespace PixelEngine
             }
         }
 
-        public void DrawTriangleTex(TexVertex v0, TexVertex v1, TexVertex v2, Bitmap tex)
+        public void DrawTriangleTex(TexVertex v0, TexVertex v1, TexVertex v2, DirectBitmap tex)
         {
 
             if (v1.pos.y < v0.pos.y)
@@ -290,100 +290,64 @@ namespace PixelEngine
             }
         }
 
-        private void DrawFlatTopTriangleTex(TexVertex v0, TexVertex v1, TexVertex v2, Bitmap tex)
+        private void DrawFlatTopTriangleTex(TexVertex v0, TexVertex v1, TexVertex v2, DirectBitmap tex)
+        {
+            float delta_y = v2.pos.y - v0.pos.y;
+            TexVertex dv0 = (v2 - v0) / delta_y;
+            TexVertex dv1 = (v2 - v1) / delta_y;
+
+            TexVertex itEdge1 = v1;
+
+            DrawFlatTriangleTex(v0, v1, v2, tex, dv0, dv1, itEdge1);
+        }
+
+        private void DrawFlatBottomTriangleTex(TexVertex v0, TexVertex v1, TexVertex v2, DirectBitmap tex)
         {
 
-            float k0 = (v2.pos.x - v0.pos.x) / (v2.pos.y - v0.pos.y);
-            float k1 = (v2.pos.x - v1.pos.x) / (v2.pos.y - v1.pos.y);
+            float delta_y = v2.pos.y - v0.pos.y;
+            TexVertex dv0 = (v1 - v0) / delta_y;
+            TexVertex dv1 = (v2 - v0) / delta_y;
+
+            TexVertex itEdge1 = v0;
+
+            DrawFlatTriangleTex(v0, v1, v2, tex, dv0, dv1, itEdge1);
+        }
+
+        private void DrawFlatTriangleTex( TexVertex v0, TexVertex v1, TexVertex v2, DirectBitmap tex,
+							  TexVertex dv0, TexVertex dv1, TexVertex itEdge1 )
+        {
+            TexVertex itEdge0 = v0;
 
             int yStart = (int)Math.Ceiling(v0.pos.y - 0.5f);
             int yEnd = (int)Math.Ceiling(v2.pos.y - 0.5f);
 
-            Vec2<float> tcEdgeL = v0.tc;
-            Vec2<float> tcEdgeR = v1.tc;
-            Vec2<float> tcBottom = v2.tc;
-
-            Vec2<float> tcEdgeStepL = (tcBottom - tcEdgeL) / (v2.pos.y - v0.pos.y);
-            Vec2<float> tcEdgeStepR = (tcBottom - tcEdgeR) / (v2.pos.y - v1.pos.y);
-
-            tcEdgeL += tcEdgeStepL * ((float)yStart + 0.5f - v1.pos.y);
-            tcEdgeR += tcEdgeStepR * ((float)yStart + 0.5f - v1.pos.y);
+            itEdge0 += dv0 * ((float)yStart + 0.5f - v0.pos.y);
+            itEdge1 += dv1 * ((float)yStart + 0.5f - v0.pos.y);
 
             float tex_width = tex.Width;
             float tex_height = tex.Height;
             float tex_clamp_x = tex_width - 1.0f;
             float tex_clamp_y = tex_height - 1.0f;
 
-            for (int y = yStart; y < yEnd; y++
-                , tcEdgeL += tcEdgeStepL, tcEdgeR += tcEdgeStepR)
+            for (int y = yStart; y < yEnd; y++, itEdge0 += dv0, itEdge1 += dv1)
             {
-                float px0 = k0 * ((float)(y) + 0.5f - v0.pos.y) + v0.pos.x;
-                float px1 = k1 * ((float)(y) + 0.5f - v1.pos.y) + v1.pos.x;
+                int xStart = (int)Math.Ceiling(itEdge0.pos.x - 0.5f);
+                int xEnd = (int)Math.Ceiling(itEdge1.pos.x - 0.5f);
 
-                int xStart = (int)Math.Ceiling(px0 - 0.5f);
-                int xEnd = (int)Math.Ceiling(px1 - 0.5f);
+                Vec2<float> dtcLine = (itEdge1.tc - itEdge0.tc) / (itEdge1.pos.x - itEdge0.pos.x);
 
-                Vec2<float> tcScanStep = (tcEdgeR - tcEdgeL) / (px1 - px0);
+                Vec2<float> itcLine = itEdge0.tc + dtcLine * ((float)xStart + 0.5f - itEdge0.pos.x);
 
-                Vec2<float> tc = tcEdgeL + tcScanStep * ((float)xStart + 0.5f - px0);
-
-                for (int x = xStart; x < xEnd; x++, tc += tcScanStep)
+                for (int x = xStart; x < xEnd; x++, itcLine += dtcLine)
                 {
                     PutPixel(x, y, tex.GetPixel(
-                        (int)Math.Min(tc.x * tex_width, tex_clamp_x),
-                        (int)Math.Min(tc.y * tex_height, tex_clamp_y)
+                        (int)Math.Min(itcLine.x * tex_width, tex_clamp_x),
+                        (int)Math.Min(itcLine.y * tex_height, tex_clamp_y)
                     ));
                 }
             }
         }
 
-        private void DrawFlatBottomTriangleTex(TexVertex v0, TexVertex v1, TexVertex v2, Bitmap tex)
-        {
-
-            float k0 = (v1.pos.x - v0.pos.x) / (v1.pos.y - v0.pos.y);
-            float k1 = (v2.pos.x - v0.pos.x) / (v2.pos.y - v0.pos.y);
-
-            int yStart = (int)Math.Ceiling(v0.pos.y - 0.5f);
-            int yEnd = (int)Math.Ceiling(v2.pos.y - 0.5f);
-
-            Vec2<float> tcEdgeL = v0.tc;
-            Vec2<float> tcEdgeR = v0.tc;
-            Vec2<float> tcBottomL = v1.tc;
-            Vec2<float> tcBottomR = v2.tc;
-
-            Vec2<float> tcEdgeStepL = (tcBottomL - tcEdgeL) / (v1.pos.y - v0.pos.y);
-            Vec2<float> tcEdgeStepR = (tcBottomR - tcEdgeR) / (v2.pos.y - v0.pos.y);
-
-            tcEdgeL += tcEdgeStepL * ((float)yStart + 0.5f - v0.pos.y);
-            tcEdgeR += tcEdgeStepR * ((float)yStart + 0.5f - v0.pos.y);
-
-            float tex_width = tex.Width;
-            float tex_height = tex.Height;
-            float tex_clamp_x = tex_width - 1.0f;
-            float tex_clamp_y = tex_height - 1.0f;
-
-            for (int y = yStart; y < yEnd; y++
-                , tcEdgeL += tcEdgeStepL, tcEdgeR += tcEdgeStepR)
-            {
-                float px0 = k0 * ((float)(y) + 0.5f - v0.pos.y) + v0.pos.x;
-                float px1 = k1 * ((float)(y) + 0.5f - v0.pos.y) + v0.pos.x;
-
-                int xStart = (int)Math.Ceiling(px0 - 0.5f);
-                int xEnd = (int)Math.Ceiling(px1 - 0.5f);
-
-                Vec2<float> tcScanStep = (tcEdgeR - tcEdgeL) / (px1 - px0);
-
-                Vec2<float> tc = tcEdgeL + tcScanStep * ((float)xStart + 0.5f - px0);
-
-                for (int x = xStart; x < xEnd; x++, tc += tcScanStep)
-                {
-                    PutPixel(x, y, tex.GetPixel(
-                        (int)Math.Min(tc.x * tex_width, tex_clamp_x),
-                        (int)Math.Min(tc.y * tex_height, tex_clamp_y)
-                    ));
-                }
-            }
-        }
 
         public void ResetScreen()
         {
