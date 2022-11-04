@@ -5,10 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
+using System.IO;
+using System.Reflection;
 
 namespace PixelEngine.Scenes
 {
-    internal class PyramidScene : Scene
+    internal class SauronCubeScene : Scene
     {
         public override void Update(Keyboard keyboard, float dt)
         {
@@ -49,8 +51,8 @@ namespace PixelEngine.Scenes
 
         public override void Draw(PixelGraphics gfx)
         {
-            IndexedLineList lines = pyramid.GetLines().DeepCopy();
-            IndexedTriangleList triangles = pyramid.GetTriangles().DeepCopy();
+            IndexedLineList lines = cube.GetLines().DeepCopy();
+            IndexedTriangleList<TexVertex> triangles = cube.GetTrianglesTex().DeepCopy();
 
             Mat3<float> rot =
                 Mat3<float>.RotationX(theta_x) *
@@ -59,8 +61,8 @@ namespace PixelEngine.Scenes
 
             for (int i = 0; i < triangles.vertices.Count; i++)
             {
-                triangles.vertices[i] *= rot;
-                triangles.vertices[i] += new Vec3<float>(0.0f, 0.0f, offset_z);
+                triangles.vertices[i].pos *= rot;
+                triangles.vertices[i].pos += new Vec3<float>(0.0f, 0.0f, offset_z);
 
                 lines.vertices[i] *= rot;
                 lines.vertices[i] += new Vec3<float>(0.0f, 0.0f, offset_z);
@@ -68,15 +70,15 @@ namespace PixelEngine.Scenes
 
             for (int i = 0, end = triangles.indices.Count / 3; i < end; i++)
             {
-                Vec3<float> v0 = triangles.vertices[triangles.indices[i * 3]];
-                Vec3<float> v1 = triangles.vertices[triangles.indices[i * 3 + 1]];
-                Vec3<float> v2 = triangles.vertices[triangles.indices[i * 3 + 2]];
+                Vec3<float> v0 = triangles.vertices[triangles.indices[i * 3]].pos;
+                Vec3<float> v1 = triangles.vertices[triangles.indices[i * 3 + 1]].pos;
+                Vec3<float> v2 = triangles.vertices[triangles.indices[i * 3 + 2]].pos;
                 triangles.cullFlags[i] = (v1 - v0) % (v2 - v0) * v0 >= 0.0f;
             }
 
             for (int i = 0; i < triangles.vertices.Count; i++)
             {
-                pst.Transform(triangles.vertices[i]);
+                pst.Transform(triangles.vertices[i].pos);
                 pst.Transform(lines.vertices[i]);
             }
 
@@ -84,11 +86,11 @@ namespace PixelEngine.Scenes
             {
                 if (!triangles.cullFlags[i])
                 {
-                    gfx.DrawTriangle(
+                    gfx.DrawTriangleTex(
                         triangles.vertices[triangles.indices[i * 3]],
                         triangles.vertices[triangles.indices[i * 3 + 1]],
                         triangles.vertices[triangles.indices[i * 3 + 2]],
-                        colors[i]);
+                        sauronTex);
                 }
             }
 
@@ -102,18 +104,15 @@ namespace PixelEngine.Scenes
         }
 
         PubeScreenTransformer pst = new PubeScreenTransformer();
-        Pyramid pyramid = new Pyramid(1.0f);
-        Color[] colors = new Color[4]{
-            Color.Red,
-            Color.Blue,
-            Color.Yellow,
-            Color.LimeGreen
-        };
+        Cube cube = new Cube(1.0f);
         float dTheta = (float)Math.PI;
         float offset_z = 2.0f;
         float theta_x = 0.0f;
         float theta_y = 0.0f;
         float theta_z = 0.0f;
         bool drawWireFrame = false;
+        // Add Path to PixelEngine Between C: and \PixelEngine
+        Bitmap sauronTex = new Bitmap(Image.FromFile(@"C:\PixelEngine\Images\sauron100x100.png"));
+
     }
 }

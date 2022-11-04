@@ -25,7 +25,7 @@ namespace PixelEngine
             InitializeComponent();
 
             scenes.Add(new SolidCubeScene());
-            scenes.Add(new PyramidScene());
+            scenes.Add(new SauronCubeScene());
 
             Timer tmr = new Timer
             {
@@ -49,11 +49,22 @@ namespace PixelEngine
             
             if(keyboard.GetKeyPressed(Keys.Tab) && !changeScene)
             {
-                if (++curScene == scenes.Count)
+                if(keyboard.GetKeyPressed(Keys.ShiftKey))
                 {
-                    curScene = 0;           
+                    if (--curScene == -1)
+                    {
+                        curScene = scenes.Count - 1;
+                    }
+                    changeScene = true;
                 }
-                changeScene = true;
+                else
+                {
+                    if (++curScene == scenes.Count)
+                    {
+                        curScene = 0;
+                    }
+                    changeScene = true;
+                }
             }
             else if(!keyboard.GetKeyPressed(Keys.Tab))
             {

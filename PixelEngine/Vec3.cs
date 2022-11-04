@@ -82,7 +82,7 @@ namespace PixelEngine
         {
             dynamic d_lhs = lhs;
 
-            return new Vec3<T>(d_lhs.x * rhs, d_lhs.y * rhs, d_lhs * rhs);
+            return new Vec3<T>(d_lhs.x * rhs, d_lhs.y * rhs, d_lhs.z * rhs);
         }
 
         public static T operator *(Vec3<T> lhs, Vec3<T> rhs)
@@ -124,6 +124,11 @@ namespace PixelEngine
             return !(lhs == rhs);
         }
 
-        public T z;
+        public Vec3<T> InterpolateTo( Vec3<T> dest,T alpha )
+	    {
+		    return this + (dest - this) * alpha;
+	    }
+
+    public T z;
     }
 }

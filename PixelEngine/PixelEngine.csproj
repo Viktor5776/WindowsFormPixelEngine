@@ -63,8 +63,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PubeScreenTransformer.cs" />
     <Compile Include="Scene.cs" />
-    <Compile Include="Scenes\PyramidScene.cs" />
+    <Compile Include="Scenes\SauronCubeScene.cs" />
     <Compile Include="Scenes\SolidCubeScene.cs" />
+    <Compile Include="TexVertex.cs" />
     <Compile Include="Vec2.cs" />
     <Compile Include="Vec3.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -92,5 +93,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Images\sauron100x100.png" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

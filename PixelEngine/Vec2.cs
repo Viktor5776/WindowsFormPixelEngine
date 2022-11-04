@@ -105,7 +105,12 @@ namespace PixelEngine
             return !(lhs == rhs);
         }
 
-        public T x;
+        public Vec2<T> InterpolateTo( Vec2<T> dest,T alpha )
+	    {
+		    return this + (dest - this) * alpha;
+	    }
+
+    public T x;
         public T y;
         
     }

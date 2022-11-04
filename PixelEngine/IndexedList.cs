@@ -32,32 +32,32 @@ namespace PixelEngine
         public List<int> indices;
     };
 
-    class IndexedTriangleList
+    class IndexedTriangleList<T>
     {
         public IndexedTriangleList()
         {
-            vertices = new List<Vec3<float>>();
+            vertices = new List<T>();
             indices = new List<int>();
             cullFlags = new List<bool>();
         }
 
-        public IndexedTriangleList(IndexedTriangleList l)
+        public IndexedTriangleList(IndexedTriangleList<T> l)
         {
             vertices = l.vertices;
             indices = l.indices;
             cullFlags = l.cullFlags;
         }
 
-        public IndexedTriangleList DeepCopy()
+        public IndexedTriangleList<T> DeepCopy()
         {
-            IndexedTriangleList other = (IndexedTriangleList)this.MemberwiseClone();
-            other.vertices = new List<Vec3<float>>(vertices);
+            IndexedTriangleList<T> other = (IndexedTriangleList<T>)this.MemberwiseClone();
+            other.vertices = new List<T>(vertices);
             other.indices = new List<int>(indices);
             other.cullFlags = new List<bool>(cullFlags);
             return other;
         }
 
-        public List<Vec3<float>> vertices;
+        public List<T> vertices;
         public List<int> indices;
         public List<bool> cullFlags;
     };

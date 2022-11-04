@@ -12,14 +12,22 @@ namespace PixelEngine
         public Cube(float size)
         {
             float side = size / 2.0f;
-            vertices.Add(new Vec3<float>(-side, -side, -side));
-            vertices.Add(new Vec3<float>(side, -side, -side));
-            vertices.Add(new Vec3<float>(-side, side, -side));
-            vertices.Add(new Vec3<float>(side, side, -side));
-            vertices.Add(new Vec3<float>(-side, -side, side));
-            vertices.Add(new Vec3<float>(side, -side, side));
-            vertices.Add(new Vec3<float>(-side, side, side));
-            vertices.Add(new Vec3<float>(side, side, side));
+            vertices.Add(new Vec3<float>(-side, -side, -side)); // 0
+            tc.Add(new Vec2<float>(0.0f, 1.0f));
+            vertices.Add(new Vec3<float>(side, -side, -side)); // 1
+            tc.Add(new Vec2<float>(1.0f, 1.0f));
+            vertices.Add(new Vec3<float>(-side, side, -side)); // 2
+            tc.Add(new Vec2<float>(0.0f, 0.0f));
+            vertices.Add(new Vec3<float>(side, side, -side)); // 3
+            tc.Add(new Vec2<float>(1.0f, 0.0f));
+            vertices.Add(new Vec3<float>(-side, -side, side)); // 4
+            tc.Add(new Vec2<float>(1.0f, 1.0f));
+            vertices.Add(new Vec3<float>(side, -side, side)); // 5
+            tc.Add(new Vec2<float>(0.0f, 1.0f));
+            vertices.Add(new Vec3<float>(-side, side, side)); // 6
+            tc.Add(new Vec2<float>(1.0f, 0.0f));
+            vertices.Add(new Vec3<float>(side, side, side)); // 7
+            tc.Add(new Vec2<float>(0.0f, 0.0f));
         }
         public IndexedLineList GetLines()
         {
@@ -34,9 +42,9 @@ namespace PixelEngine
             return lines;
         }
 
-        public IndexedTriangleList GetTriangles()
+        public IndexedTriangleList<Vec3<float>> GetTriangles()
 	    {
-            IndexedTriangleList triangles = new IndexedTriangleList();
+            IndexedTriangleList<Vec3<float>> triangles = new IndexedTriangleList<Vec3<float>>();
             triangles.vertices = vertices;
             triangles.indices = new List<int>
             {
@@ -55,39 +63,23 @@ namespace PixelEngine
             return triangles;
         }
 
-        List<Vec3<float>> vertices = new List<Vec3<float>>();
-    }
-
-    internal class Pyramid
-    {
-        public Pyramid(float size)
+        public IndexedTriangleList<TexVertex> GetTrianglesTex()
         {
-            float side = size / 2.0f;
-            vertices.Add(new Vec3<float>(0, -side, -0.86f * side));
-            vertices.Add(new Vec3<float>(-side, -side, 0.86f * side));
-            vertices.Add(new Vec3<float>(side, -side, 0.86f * side));
-            vertices.Add(new Vec3<float>(0, side, 0.258f * side));
-        }
-        public IndexedLineList GetLines()
-        {
-            IndexedLineList lines = new IndexedLineList();
-            lines.vertices = vertices;
-            lines.indices = new List<int>
+            IndexedTriangleList<TexVertex> triangles = new IndexedTriangleList<TexVertex>();
+            List<TexVertex> tverts = new List<TexVertex>();
+            for (int i = 0; i < vertices.Count; i++)
             {
-                0,1,  1,2,  2,0,
-                0,3,  1,3,  2,3,
-            };
-            return lines;
-        }
-
-        public IndexedTriangleList GetTriangles()
-        {
-            IndexedTriangleList triangles = new IndexedTriangleList();
-            triangles.vertices = vertices;
+                tverts.Add(new TexVertex(vertices[i], tc[i]));
+            }
+            triangles.vertices = tverts;
             triangles.indices = new List<int>
             {
-                1,3,0, 0,3,2,
-                2,3,1, 2,1,0
+                0,2,1, 2,3,1,
+                1,3,5, 3,7,5,
+                2,6,3, 3,6,7,
+                4,5,7, 4,7,6,
+                0,4,2, 2,4,6,
+                0,1,4, 1,5,4
             };
             triangles.cullFlags = new List<bool>();
             for (int i = 0; i < triangles.indices.Count / 3; i++)
@@ -98,6 +90,6 @@ namespace PixelEngine
         }
 
         List<Vec3<float>> vertices = new List<Vec3<float>>();
+        List<Vec2<float>> tc = new List<Vec2<float>>();
     }
-
 }

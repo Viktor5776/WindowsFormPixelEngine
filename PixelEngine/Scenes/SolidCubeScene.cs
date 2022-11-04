@@ -50,7 +50,7 @@ namespace PixelEngine.Scenes
         public override void Draw(PixelGraphics gfx)
         {
             IndexedLineList lines = cube.GetLines().DeepCopy();
-            IndexedTriangleList triangles = cube.GetTriangles().DeepCopy();
+            IndexedTriangleList<Vec3<float>> triangles = cube.GetTriangles().DeepCopy();
 
             Mat3<float> rot =
                 Mat3<float>.RotationX(theta_x) *
