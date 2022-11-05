@@ -27,12 +27,8 @@ namespace PixelEngine
         {
             InitializeComponent();
             //Path for project folder
-            string filePath = @"C:\programmering\C#Projects\WindowsFormPixelEngine\";
-            scenes.Add(new SolidCubeScene());
-            scenes.Add(new TexWrapScene(filePath + @"PixelEngine\Images\sauron100x100.png",4.0f));
-            scenes.Add(new CubeSkinnedScene(filePath + @"PixelEngine\Images\dice_skin.png"));
-            scenes.Add(new CubeSkinnedScene(filePath + @"PixelEngine\Images\office_skin.jpg"));
-            scenes.Add(new FoldedCubeScene(filePath + @"PixelEngine\Images\wood.jpg"));
+            string filePath = @"C:\Users\vikto\OneDrive\Skrivbord\WindowsFromPixelEngine\";
+            scenes.Add(new CubeSkinScene(gfx, filePath + @"PixelEngine\Images\office_skin.jpg"));
 
 
             Timer tmr = new Timer
@@ -90,7 +86,7 @@ namespace PixelEngine
 
         private void ComposeFrame()
         {
-            scenes[curScene].Draw(gfx);
+            scenes[curScene].Draw();
         }
             
 

@@ -124,11 +124,6 @@ namespace PixelEngine
             return !(lhs == rhs);
         }
 
-        public Vec3<T> InterpolateTo( Vec3<T> dest,T alpha )
-	    {
-		    return this + (dest - this) * alpha;
-	    }
-
     public T z;
     }
 }

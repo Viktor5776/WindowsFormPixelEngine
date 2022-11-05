@@ -48,10 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IndexedList.cs" />
+    <Compile Include="IndexedTriangleList.cs" />
+    <Compile Include="Maths.cs" />
     <Compile Include="Models\Cube.cs" />
-    <Compile Include="Models\CubeFolded.cs" />
-    <Compile Include="Models\CubeFoldedWrap.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -60,17 +59,14 @@
     </Compile>
     <Compile Include="Keyboard.cs" />
     <Compile Include="Mat3.cs" />
-    <Compile Include="Models\CubeSkinned.cs" />
+    <Compile Include="Pipeline.cs" />
     <Compile Include="PixelGraphics.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PubeScreenTransformer.cs" />
     <Compile Include="Scene.cs" />
-    <Compile Include="Scenes\CubeSkinnedScene.cs" />
-    <Compile Include="Scenes\FoldedCubeScene.cs" />
-    <Compile Include="Scenes\SolidCubeScene.cs" />
-    <Compile Include="Scenes\TexWrapScene.cs" />
-    <Compile Include="TexVertex.cs" />
+    <Compile Include="Scenes\CubeSkinScene.cs" />
+    <Compile Include="Triangle.cs" />
     <Compile Include="Vec2.cs" />
     <Compile Include="Vec3.cs" />
     <EmbeddedResource Include="Form1.resx">
