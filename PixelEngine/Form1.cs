@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -20,16 +21,18 @@ namespace PixelEngine
         int curScene = 0;
         bool changeScene = false;
 
+        float dt = 0.0f;
+
         public Form1()
         {
             InitializeComponent();
-
-            // Add Path to PixelEngine Between C: and \PixelEngine
+            //Path for project folder
+            string filePath = @"C:\programmering\C#Projects\WindowsFormPixelEngine\";
             scenes.Add(new SolidCubeScene());
-            scenes.Add(new TexWrapScene(@"C:\PixelEngine\Images\sauron100x100.png",4.0f));
-            scenes.Add(new CubeSkinnedScene(@"C:\PixelEngine\Images\dice_skin.png"));
-            scenes.Add(new CubeSkinnedScene(@"C:\PixelEngine\Images\office_skin.jpg"));
-            scenes.Add(new FoldedCubeScene(@"C:\PixelEngine\Images\wood.jpg"));
+            scenes.Add(new TexWrapScene(filePath + @"PixelEngine\Images\sauron100x100.png",4.0f));
+            scenes.Add(new CubeSkinnedScene(filePath + @"PixelEngine\Images\dice_skin.png"));
+            scenes.Add(new CubeSkinnedScene(filePath + @"PixelEngine\Images\office_skin.jpg"));
+            scenes.Add(new FoldedCubeScene(filePath + @"PixelEngine\Images\wood.jpg"));
 
 
             Timer tmr = new Timer
@@ -42,15 +45,21 @@ namespace PixelEngine
 
         private void Frame(object sender, EventArgs e)
         {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
             gfx.ResetScreen();
             UpdateModel();
             ComposeFrame();
             gfx.Draw(this.CreateGraphics());
+
+            sw.Stop();
+
+            dt = sw.ElapsedMilliseconds / 1000.0f;
         }
 
         private void UpdateModel()
         {
-            float dt = 1.0f / 60.0f;
             
             if(keyboard.GetKeyPressed(Keys.Tab) && !changeScene)
             {
